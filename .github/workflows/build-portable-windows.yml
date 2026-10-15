@@ -63,12 +63,11 @@ jobs:
         shell: pwsh
         run: |
           node scripts/build-portable-vscode.mjs win32
+          Get-Item Univertix-VSCode-win32-x64-portable.zip
 
       - name: Upload Windows Portable Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Univertix-VSCode-win32-x64-portable
-          path: |
-            Univertix-VSCode-win32-x64-portable.zip
-            ../Univertix-VSCode-win32-x64-portable.zip
+          path: Univertix-VSCode-win32-x64-portable.zip
           retention-days: 14

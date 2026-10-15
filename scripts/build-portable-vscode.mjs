@@ -102,6 +102,7 @@ async function buildWin32() {
 		setupPortableData(destinationFolder);
 
 		const zipOutput = path.join(parentDir, 'Univertix-VSCode-win32-x64-portable.zip');
+		const zipOutputRoot = path.join(root, 'Univertix-VSCode-win32-x64-portable.zip');
 		console.log(`  -> Compactando para ${zipOutput}...`);
 		if (process.platform === 'win32') {
 			try {
@@ -112,10 +113,9 @@ async function buildWin32() {
 		} else {
 			execSync(`cd "${parentDir}" && zip -r -q "${zipOutput}" "VSCode-win32-x64"`, { stdio: 'inherit' });
 		}
-		try {
-			fs.copyFileSync(zipOutput, path.join(root, 'Univertix-VSCode-win32-x64-portable.zip'));
-		} catch { }
+		fs.copyFileSync(zipOutput, zipOutputRoot);
 		console.log(`  ✅ Pacote Windows Portátil pronto: ${zipOutput}`);
+		console.log(`  ✅ Cópia na raiz do repositório: ${zipOutputRoot}`);
 	}
 }
 
