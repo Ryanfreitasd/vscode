@@ -11,6 +11,14 @@ jobs:
   build-windows:
     runs-on: windows-2022
     name: Build Windows x64 Portable
+    env:
+      npm_config_arch: x64
+      npm_config_foreground_scripts: "true"
+      VSCODE_ARCH: x64
+      ELECTRON_SKIP_BINARY_DOWNLOAD: 1
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      VSCODE_SKIP_NODE_VERSION_CHECK: 1
+      vs2022_install: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,31 +26,41 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Preinstall & Dependencies
-        shell: bash
+      - name: Install dependencies
+        shell: pwsh
         env:
-          npm_config_arch: x64
-          VSCODE_ARCH: x64
-          npm_config_foreground_scripts: 'true'
-          ELECTRON_SKIP_BINARY_DOWNLOAD: '0'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node build/npm/preinstall.ts || true
-          npm ci || npm install
+          . build/azure-pipelines/win32/exec.ps1
+          $ErrorActionPreference = "Stop"
 
-      - name: Download Built-in Extensions
-        shell: bash
-        run: |
-          node build/lib/builtInExtensions.ts || true
+          # Run preinstall script to download Electron/v8 headers
+          exec { node build/npm/preinstall.ts }
+
+          for ($i = 1; $i -le 5; $i++) {
+            try {
+              exec { npm ci }
+              break
+            }
+            catch {
+              if ($i -eq 5) {
+                Write-Error "npm ci failed after 5 attempts"
+                throw
+              }
+              Write-Host "npm ci failed attempt $i, retrying..."
+              Start-Sleep -Seconds 2
+            }
+          }
 
       - name: Compile Windows Portable VS Code
-        shell: bash
+        shell: pwsh
         run: |
           node scripts/build-portable-vscode.mjs win32
 

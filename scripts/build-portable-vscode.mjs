@@ -104,7 +104,11 @@ async function buildWin32() {
 		const zipOutput = path.join(parentDir, 'Univertix-VSCode-win32-x64-portable.zip');
 		console.log(`  -> Compactando para ${zipOutput}...`);
 		if (process.platform === 'win32') {
-			execSync(`powershell Compress-Archive -Path "${destinationFolder}" -DestinationPath "${zipOutput}" -Force`, { stdio: 'inherit' });
+			try {
+				execSync(`7z a -tzip -mx=4 "${zipOutput}" "${destinationFolder}"`, { stdio: 'inherit' });
+			} catch {
+				execSync(`powershell Compress-Archive -Path "${destinationFolder}" -DestinationPath "${zipOutput}" -Force`, { stdio: 'inherit' });
+			}
 		} else {
 			execSync(`cd "${parentDir}" && zip -r -q "${zipOutput}" "VSCode-win32-x64"`, { stdio: 'inherit' });
 		}
