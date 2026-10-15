@@ -238,10 +238,7 @@ export class OpenWorkspaceInAgentsWindowTitleBarAction extends Action2 {
 			menu: {
 				id: MenuId.TitleBarAdjacentCenter,
 				order: -1000,
-				when: ContextKeyExpr.and(
-					OPEN_AGENTS_WINDOW_PRECONDITION,
-					ContextKeyExpr.notEquals(`config.${ChatConfiguration.TitleBarOpenInAgentsWindowEnabled}`, false),
-				),
+				when: ContextKeyExpr.false(),
 			},
 		});
 	}
@@ -546,6 +543,10 @@ export class OpenWorkspaceInAgentsContribution extends Disposable implements IWo
 		@IStorageService storageService: IStorageService,
 	) {
 		super();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 		const usage = new AgentsWindowUsage(storageService);
 		const hasCreatedSession = ChatContextKeys.hasCreatedSessionInAgentsWindow.bindTo(contextKeyService);
 		const updateHasCreatedSession = () => hasCreatedSession.set(usage.createdSessionCount > 0);

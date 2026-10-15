@@ -459,9 +459,12 @@ function packageTask(platform: string, arch: string, sourceFolderName: string, d
 }
 
 function hasAuthenticodeSignature(filePath: string): Promise<boolean> {
-	return new Promise((resolve, reject) => {
+	if (process.platform !== 'win32') {
+		return Promise.resolve(false);
+	}
+	return new Promise((resolve) => {
 		const proc = cp.spawn('signtool.exe', ['verify', '/pa', filePath]);
-		proc.on('error', reject);
+		proc.on('error', () => resolve(false));
 		proc.on('exit', code => resolve(code === 0));
 	});
 }
@@ -512,19 +515,23 @@ function patchWin32DependenciesTask(destinationFolderName: string) {
 			const fullPath = path.join(cwd, dep);
 
 			await stripAuthenticodeSignature(fullPath);
-			await rcedit(fullPath, {
-				'file-version': baseVersion,
-				'version-string': {
-					'CompanyName': 'Microsoft Corporation',
-					'FileDescription': product.nameLong,
-					'FileVersion': packageJson.version,
-					'InternalName': basename,
-					'LegalCopyright': 'Copyright (C) 2026 Microsoft. All rights reserved',
-					'OriginalFilename': basename,
-					'ProductName': product.nameLong,
-					'ProductVersion': packageJson.version,
-				}
-			});
+			try {
+				await rcedit(fullPath, {
+					'file-version': baseVersion,
+					'version-string': {
+						'CompanyName': 'Microsoft Corporation',
+						'FileDescription': product.nameLong,
+						'FileVersion': packageJson.version,
+						'InternalName': basename,
+						'LegalCopyright': 'Copyright (C) 2026 Microsoft. All rights reserved',
+						'OriginalFilename': basename,
+						'ProductName': product.nameLong,
+						'ProductVersion': packageJson.version,
+					}
+				});
+			} catch (err) {
+				console.warn(`[patchWin32] Warning: Could not patch resource info for ${basename}: ${(err as Error).message}`);
+			}
 		});
 
 		await Promise.all(patchPromises);
@@ -544,7 +551,9 @@ function prepareCopilotRipgrepShimTask(platform: string, arch: string, destinati
 		const appNodeModulesDir = path.join(appBase, 'node_modules.asar.unpacked');
 
 		const builtInCopilotExtensionDir = path.join(appBase, 'extensions', 'copilot');
-		prepareBuiltInCopilotRipgrepShim(platform, arch, builtInCopilotExtensionDir, appNodeModulesDir);
+		if (fs.existsSync(builtInCopilotExtensionDir)) {
+			prepareBuiltInCopilotRipgrepShim(platform, arch, builtInCopilotExtensionDir, appNodeModulesDir);
+		}
 	};
 }
 

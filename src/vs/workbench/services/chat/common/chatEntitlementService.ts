@@ -26,7 +26,6 @@ import { IOpenerService } from '../../../../platform/opener/common/opener.js';
 import { URI } from '../../../../base/common/uri.js';
 import Severity from '../../../../base/common/severity.js';
 import { IWorkbenchEnvironmentService } from '../../environment/common/environmentService.js';
-import { isWeb } from '../../../../base/common/platform.js';
 import { ILifecycleService } from '../../lifecycle/common/lifecycle.js';
 import { Mutable } from '../../../../base/common/types.js';
 import { InstantiationType, registerSingleton } from '../../../../platform/instantiation/common/extensions.js';
@@ -450,13 +449,10 @@ export class ChatEntitlementService extends Disposable implements IChatEntitleme
 		);
 		this.sentimentObs = observableFromEvent(this.onDidChangeSentiment, () => this.sentiment);
 
-		if ((isWeb && !environmentService.remoteAuthority && !environmentService.isSessionsWindow)) {
-			ChatEntitlementContextKeys.Setup.hidden.bindTo(this.contextKeyService).set(true); // hide copilot UI on web if unsupported
+		ChatEntitlementContextKeys.Setup.hidden.bindTo(this.contextKeyService).set(true);
+		const enabled = Boolean(false);
+		if (!enabled) {
 			return;
-		}
-
-		if (!productService.defaultChatAgent) {
-			return; // we need a default chat agent configured going forward from here
 		}
 
 		const context = this.context = new Lazy(() => this._register(instantiationService.createInstance(ChatEntitlementContext)));

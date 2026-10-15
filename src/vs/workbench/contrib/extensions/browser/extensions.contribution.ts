@@ -47,7 +47,7 @@ import { IUriIdentityService } from '../../../../platform/uriIdentity/common/uri
 import { IUserDataProfilesService } from '../../../../platform/userDataProfile/common/userDataProfile.js';
 import { EditorPaneDescriptor, IEditorPaneRegistry } from '../../../browser/editor.js';
 import { Extensions as ConfigurationMigrationExtensions, IConfigurationMigrationRegistry } from '../../../common/configuration.js';
-import { IsSessionsWindowContext, ResourceContextKey, WorkbenchStateContext } from '../../../common/contextkeys.js';
+import { IsSessionsWindowContext, WorkbenchStateContext } from '../../../common/contextkeys.js';
 import { IWorkbenchContribution, IWorkbenchContributionsRegistry, registerWorkbenchContribution2, Extensions as WorkbenchExtensions, WorkbenchPhase } from '../../../common/contributions.js';
 import { EditorExtensions } from '../../../common/editor.js';
 import { IViewContainersRegistry, Extensions as ViewContainerExtensions, ViewContainerLocation } from '../../../common/views.js';
@@ -491,6 +491,10 @@ CommandsRegistry.registerCommand({
 			justification?: string | { reason: string; action: string };
 			enable?: boolean;
 		}) => {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const extensionsWorkbenchService = accessor.get(IExtensionsWorkbenchService);
 		const extensionManagementService = accessor.get(IWorkbenchExtensionManagementService);
 		const extensionGalleryService = accessor.get(IExtensionGalleryService);
@@ -732,9 +736,15 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			category: ExtensionsLocalizedLabel,
 			menu: {
 				id: MenuId.CommandPalette,
-				when: ContextKeyExpr.and(CONTEXT_HAS_GALLERY, ContextKeyExpr.or(CONTEXT_HAS_LOCAL_SERVER, CONTEXT_HAS_REMOTE_SERVER, CONTEXT_HAS_WEB_SERVER))
+				when: ContextKeyExpr.false()
 			},
 			run: async (accessor: ServicesAccessor) => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					const notificationService = accessor.get(INotificationService);
+					notificationService.error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+					return;
+				}
 				accessor.get(IViewsService).openViewContainer(VIEWLET_ID, true);
 			}
 		});
@@ -936,14 +946,20 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			category: ExtensionsLocalizedLabel,
 			menu: [{
 				id: MenuId.CommandPalette,
-				when: ContextKeyExpr.or(CONTEXT_HAS_LOCAL_SERVER, CONTEXT_HAS_REMOTE_SERVER)
+				when: ContextKeyExpr.false()
 			}, {
 				id: MenuId.ViewContainerTitle,
-				when: ContextKeyExpr.and(ContextKeyExpr.equals('viewContainer', VIEWLET_ID), ContextKeyExpr.or(CONTEXT_HAS_LOCAL_SERVER, CONTEXT_HAS_REMOTE_SERVER)),
+				when: ContextKeyExpr.false(),
 				group: '3_install',
 				order: 1
 			}],
 			run: async (accessor: ServicesAccessor) => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					const notificationService = accessor.get(INotificationService);
+					notificationService.error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+					return;
+				}
 				const fileDialogService = accessor.get(IFileDialogService);
 				const commandService = accessor.get(ICommandService);
 				const vsixPaths = await fileDialogService.showOpenDialog({
@@ -965,9 +981,15 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			menu: [{
 				id: MenuId.ExplorerContext,
 				group: 'extensions',
-				when: ContextKeyExpr.and(ResourceContextKey.Extension.isEqualTo('.vsix'), ContextKeyExpr.or(CONTEXT_HAS_LOCAL_SERVER, CONTEXT_HAS_REMOTE_SERVER)),
+				when: ContextKeyExpr.false(),
 			}],
 			run: async (accessor: ServicesAccessor, resources: URI[] | URI) => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					const notificationService = accessor.get(INotificationService);
+					notificationService.error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+					return;
+				}
 				const extensionsWorkbenchService = accessor.get(IExtensionsWorkbenchService);
 				const hostService = accessor.get(IHostService);
 				const notificationService = accessor.get(INotificationService);
@@ -1024,9 +1046,15 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			category: Categories.Developer,
 			menu: [{
 				id: MenuId.CommandPalette,
-				when: ContextKeyExpr.or(CONTEXT_HAS_WEB_SERVER, CONTEXT_HAS_LOCAL_SERVER)
+				when: ContextKeyExpr.false()
 			}],
 			run: async (accessor: ServicesAccessor) => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					const notificationService = accessor.get(INotificationService);
+					notificationService.error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+					return;
+				}
 				const extensionManagementService = accessor.get(IWorkbenchExtensionManagementService);
 				if (isWeb) {
 					return new Promise<void>((c, e) => {
@@ -1367,11 +1395,17 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			icon: installWorkspaceRecommendedIcon,
 			menu: {
 				id: MenuId.ViewTitle,
-				when: ContextKeyExpr.equals('view', WORKSPACE_RECOMMENDATIONS_VIEW_ID),
+				when: ContextKeyExpr.false(),
 				group: 'navigation',
 				order: 1
 			},
 			run: async (accessor: ServicesAccessor) => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					const notificationService = accessor.get(INotificationService);
+					notificationService.error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+					return;
+				}
 				const view = accessor.get(IViewsService).getActiveViewWithId(WORKSPACE_RECOMMENDATIONS_VIEW_ID) as IWorkspaceRecommendedExtensionsView;
 				return view.installWorkspaceRecommendations();
 			}
@@ -1399,9 +1433,15 @@ class ExtensionsContributions extends Disposable implements IWorkbenchContributi
 			category: ExtensionsLocalizedLabel,
 			menu: {
 				id: MenuId.CommandPalette,
-				when: ContextKeyExpr.and(CONTEXT_HAS_GALLERY, ContextKeyExpr.or(CONTEXT_HAS_LOCAL_SERVER, CONTEXT_HAS_REMOTE_SERVER, CONTEXT_HAS_WEB_SERVER))
+				when: ContextKeyExpr.false()
 			},
-			run: () => runAction(this.instantiationService.createInstance(InstallSpecificVersionOfExtensionAction, InstallSpecificVersionOfExtensionAction.ID, InstallSpecificVersionOfExtensionAction.LABEL))
+			run: () => {
+				const enabled = Boolean(false);
+				if (!enabled) {
+					throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+				}
+				return runAction(this.instantiationService.createInstance(InstallSpecificVersionOfExtensionAction, InstallSpecificVersionOfExtensionAction.ID, InstallSpecificVersionOfExtensionAction.LABEL));
+			}
 		});
 	}
 

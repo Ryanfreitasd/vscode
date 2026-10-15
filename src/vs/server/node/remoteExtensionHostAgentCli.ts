@@ -12,7 +12,7 @@ import { IRequestService } from '../../platform/request/common/request.js';
 import { RequestService } from '../../platform/request/node/requestService.js';
 import { NullTelemetryService } from '../../platform/telemetry/common/telemetryUtils.js';
 import { ITelemetryService } from '../../platform/telemetry/common/telemetry.js';
-import { IAllowedExtensionsService, IExtensionGalleryService, InstallOptions } from '../../platform/extensionManagement/common/extensionManagement.js';
+import { IAllowedExtensionsService, IExtensionGalleryService } from '../../platform/extensionManagement/common/extensionManagement.js';
 import { ExtensionGalleryServiceWithNoStorageService } from '../../platform/extensionManagement/common/extensionGalleryService.js';
 import { ExtensionManagementService, INativeServerExtensionManagementService } from '../../platform/extensionManagement/node/extensionManagementService.js';
 import { ExtensionSignatureVerificationService, IExtensionSignatureVerificationService } from '../../platform/extensionManagement/node/extensionSignatureVerificationService.js';
@@ -155,8 +155,8 @@ class CliMain extends Disposable {
 
 		// Install Extension
 		else if (this.args['install-extension'] || this.args['install-builtin-extension']) {
-			const installOptions: InstallOptions = { isMachineScoped: !!this.args['do-not-sync'], installPreReleaseVersion: !!this.args['pre-release'], donotIncludePackAndDependencies: !!this.args['do-not-include-pack-dependencies'] };
-			return extensionManagementCLI.installExtensions(this.asExtensionIdOrVSIX(this.args['install-extension'] || []), this.asExtensionIdOrVSIX(this.args['install-builtin-extension'] || []), installOptions, !!this.args['force']);
+			console.error(localize('installExtensionDisabled', "Installing extensions via terminal is disabled."));
+			return;
 		}
 
 		// Uninstall Extension

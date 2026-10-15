@@ -1415,6 +1415,10 @@ export class AgentTitleBarStatusRendering extends Disposable implements IWorkben
 		@ITitleService titleService: ITitleService,
 	) {
 		super();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 
 		this._register(actionViewItemService.register(MenuId.CommandCenter, MenuId.AgentsTitleBarControlMenu, (action, options) => {
 			if (!(action instanceof SubmenuItemAction)) {

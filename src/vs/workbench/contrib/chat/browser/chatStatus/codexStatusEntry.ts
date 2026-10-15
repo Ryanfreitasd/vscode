@@ -34,6 +34,10 @@ export class CodexStatusBarEntry extends Disposable implements IWorkbenchContrib
 		@IStatusbarService private readonly statusbarService: IStatusbarService,
 	) {
 		super();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 
 		this.dashboardTooltip = {
 			element: (token: CancellationToken) => {

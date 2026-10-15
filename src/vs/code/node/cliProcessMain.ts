@@ -23,7 +23,7 @@ import { NativeParsedArgs } from '../../platform/environment/common/argv.js';
 import { INativeEnvironmentService } from '../../platform/environment/common/environment.js';
 import { NativeEnvironmentService } from '../../platform/environment/node/environmentService.js';
 import { ExtensionGalleryServiceWithNoStorageService } from '../../platform/extensionManagement/common/extensionGalleryService.js';
-import { IAllowedExtensionsService, IExtensionGalleryService, InstallOptions } from '../../platform/extensionManagement/common/extensionManagement.js';
+import { IAllowedExtensionsService, IExtensionGalleryService } from '../../platform/extensionManagement/common/extensionManagement.js';
 import { ExtensionSignatureVerificationService, IExtensionSignatureVerificationService } from '../../platform/extensionManagement/node/extensionSignatureVerificationService.js';
 import { ExtensionManagementCLI } from '../../platform/extensionManagement/common/extensionManagementCLI.js';
 import { IExtensionsProfileScannerService } from '../../platform/extensionManagement/common/extensionsProfileScannerService.js';
@@ -319,8 +319,8 @@ class CliMain extends Disposable {
 
 		// Install Extension
 		else if (this.argv['install-extension'] || this.argv['install-builtin-extension']) {
-			const installOptions: InstallOptions = { isMachineScoped: !!this.argv['do-not-sync'], installPreReleaseVersion: !!this.argv['pre-release'], donotIncludePackAndDependencies: !!this.argv['do-not-include-pack-dependencies'], profileLocation };
-			return instantiationService.createInstance(ExtensionManagementCLI, [], new ConsoleLogger(LogLevel.Info, false)).installExtensions(this.asExtensionIdOrVSIX(this.argv['install-extension'] || []), this.asExtensionIdOrVSIX(this.argv['install-builtin-extension'] || []), installOptions, !!this.argv['force']);
+			console.error(localize('installExtensionDisabled', "Installing extensions via terminal is disabled."));
+			return;
 		}
 
 		// Uninstall Extension

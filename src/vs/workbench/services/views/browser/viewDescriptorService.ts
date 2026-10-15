@@ -328,10 +328,22 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 	}
 
 	private isViewContainerEnabled(viewContainer: ViewContainer): boolean {
+		if (viewContainer.id === 'workbench.view.extensions' ||
+			viewContainer.id === 'workbench.panel.chat' ||
+			viewContainer.id.startsWith('workbench.panel.chat') ||
+			viewContainer.id.startsWith('workbench.view.chat') ||
+			viewContainer.id.includes('chat') ||
+			viewContainer.id.includes('copilot') ||
+			viewContainer.id.includes('agent')) {
+			return false;
+		}
 		return this.isEnabled(viewContainer.windowEnablement);
 	}
 
 	private isViewEnabled(view: IViewDescriptor): boolean {
+		if (view.id.includes('chat') || view.id.includes('copilot') || view.id.includes('agent')) {
+			return false;
+		}
 		return this.isEnabled(view.windowEnablement);
 	}
 
@@ -432,6 +444,15 @@ export class ViewDescriptorService extends Disposable implements IViewDescriptor
 	}
 
 	isViewContainerRemovedPermanently(viewContainerId: string): boolean {
+		if (viewContainerId === 'workbench.view.extensions' ||
+			viewContainerId === 'workbench.panel.chat' ||
+			viewContainerId.startsWith('workbench.panel.chat') ||
+			viewContainerId.startsWith('workbench.view.chat') ||
+			viewContainerId.includes('chat') ||
+			viewContainerId.includes('copilot') ||
+			viewContainerId.includes('agent')) {
+			return true;
+		}
 		return this.isGeneratedContainerId(viewContainerId) && !this.viewContainersCustomLocations.has(viewContainerId);
 	}
 

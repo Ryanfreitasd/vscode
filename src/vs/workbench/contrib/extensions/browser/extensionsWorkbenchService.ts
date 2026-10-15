@@ -2595,6 +2595,10 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 	}
 
 	async install(arg: string | URI | IExtension, installOptions: InstallExtensionOptions = {}, progressLocation?: ProgressLocation | string): Promise<IExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(nls.localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const extension = await this._install(arg, installOptions, progressLocation);
 
 		if (!extension) {
@@ -2768,6 +2772,10 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 	}
 
 	async installInServer(extension: IExtension, server: IExtensionManagementServer, installOptions?: InstallOptions): Promise<void> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(nls.localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		await this.doInstall(extension, async () => {
 			const local = extension.local;
 			if (!local) {

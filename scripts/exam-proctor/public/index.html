@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Univertix Exam Shield — Painel do Professor</title>
+  <style>
+    :root {
+      --bg-dark: #0f111a;
+      --bg-card: #181b28;
+      --bg-card-hover: #1f2334;
+      --bg-header: #141724;
+      --border-color: #2b3046;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent: #06b6d4;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-dot.disconnected {
+      background-color: var(--danger);
+      box-shadow: 0 0 8px var(--danger);
+    }
+
+    button {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+    }
+
+    button.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    button.primary:hover {
+      background: var(--primary-hover);
+    }
+
+    button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Container & Layout */
+    .container {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Metrics Cards */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .metric-icon {
+      font-size: 2rem;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .metric-info h3 {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-info .value {
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
+    .metric-card.danger {
+      border-left: 4px solid var(--danger);
+    }
+
+    .metric-card.warning {
+      border-left: 4px solid var(--warning);
+    }
+
+    .metric-card.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .metric-card.info {
+      border-left: 4px solid var(--accent);
+    }
+
+    /* Main Content Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    @media (max-width: 1100px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: calc(100vh - 270px);
+    }
+
+    .panel-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .panel-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-input {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      width: 200px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Students List / Grid */
+    .students-container {
+      padding: 1rem;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      align-content: flex-start;
+    }
+
+    .student-card {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .student-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .student-card.has-alerts {
+      border-left: 4px solid var(--danger);
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-dark) 40%);
+    }
+
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .student-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .student-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .student-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .pill-online {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .pill-away {
+      background: var(--warning-bg);
+      color: var(--warning);
+      animation: pulse 1.5s infinite;
+    }
+
+    .pill-offline {
+      background: rgba(100, 116, 139, 0.2);
+      color: var(--text-sub);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .student-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .badge-count {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .badge-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .student-file {
+      font-size: 0.75rem;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: rgba(6, 182, 212, 0.08);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Live Feed */
+    .feed-controls {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    .feed-controls button {
+      padding: 0.3rem 0.7rem;
+      font-size: 0.75rem;
+      border-radius: 9999px;
+    }
+
+    .feed-list {
+      padding: 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feed-item {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .feed-item:hover {
+      border-color: var(--primary);
+      background: var(--bg-card-hover);
+    }
+
+    .feed-item.severity-alert {
+      border-left: 4px solid var(--danger);
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.08) 0%, var(--bg-dark) 20%);
+    }
+
+    .feed-item.severity-warning {
+      border-left: 4px solid var(--warning);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-dark) 20%);
+    }
+
+    .feed-item.severity-info {
+      border-left: 4px solid var(--accent);
+    }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+
+    .feed-student {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+
+    .feed-time {
+      color: var(--text-sub);
+    }
+
+    .feed-body {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .feed-code-preview {
+      background: #090a0f;
+      border: 1px solid #232738;
+      border-radius: 4px;
+      padding: 0.5rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 80px;
+      overflow: hidden;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      animation: modalSlide 0.2s ease;
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .code-viewer {
+      background: #090a0f;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.85rem;
+      color: #7dd3fc;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .meta-table td {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .meta-table td:first-child {
+      font-weight: 600;
+      color: var(--text-muted);
+      width: 180px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+
+    /* Print styling */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+      header, .feed-controls, .search-input, button, .modal-backdrop {
+        display: none !important;
+      }
+      .panel {
+        max-height: none;
+        border: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <div class="brand-text">
+        <h1>Univertix Exam Shield</h1>
+        <span>Painel do Professor — Monitoramento de Integridade em Tempo Real</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-badge" id="serverStatusBadge">
+        <div class="status-dot" id="serverStatusDot"></div>
+        <span id="serverStatusText">Conectando...</span>
+      </div>
+
+      <button id="toggleSoundBtn" title="Ativar/desativar alerta sonoro ao receber infração">
+        🔔 Sons Ativos
+      </button>
+
+      <button id="exportCsvBtn" title="Baixar relatório em planilha CSV">
+        📊 Exportar CSV
+      </button>
+
+      <button id="exportJsonBtn" title="Baixar log completo em JSON">
+        📄 Exportar JSON
+      </button>
+
+      <button id="clearBtn" title="Limpar sessão para iniciar uma nova prova" style="color: var(--danger);">
+        🧹 Nova Prova
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Top Summary Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card info">
+        <div class="metric-icon">🎓</div>
+        <div class="metric-info">
+          <h3>Alunos Cadastrados</h3>
+          <div class="value" id="metricTotalStudents">0</div>
+        </div>
+      </div>
+
+      <div class="metric-card success">
+        <div class="metric-icon">🟢</div>
+        <div class="metric-info">
+          <h3>Alunos Online</h3>
+          <div class="value" id="metricActiveStudents">0</div>
+        </div>
+      </div>
+
+      <div class="metric-card danger">
+        <div class="metric-icon">🚨</div>
+        <div class="metric-info">
+          <h3>Colagens Externas / Pen Drives</h3>
+          <div class="value" id="metricAlertsCount">0</div>
+        </div>
+      </div>
+
+      <div class="metric-card warning">
+        <div class="metric-icon">⚠️</div>
+        <div class="metric-info">
+          <h3>Ausências / Alt+Tabs</h3>
+          <div class="value" id="metricWarningsCount">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main 2-Panel Content -->
+    <div class="main-grid">
+      <!-- Students Panel -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>👨‍💻 Alunos em Prova (<span id="studentsCount">0</span>)</h2>
+          <input type="text" class="search-input" id="searchStudent" placeholder="Buscar aluno...">
+        </div>
+        <div class="students-container" id="studentsGrid">
+          <div class="empty-state">Nenhum aluno conectado no momento.<br>Aguardando alunos abrirem o VS Code da prova...</div>
+        </div>
+      </section>
+
+      <!-- Live Infractions & Events Feed -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>⚡ Feed de Auditoria em Tempo Real</h2>
+          <span style="font-size: 0.8rem; color: var(--text-sub);" id="eventsTotalCount">0 eventos</span>
+        </div>
+
+        <div class="feed-controls">
+          <button class="active" data-filter="all">Todos</button>
+          <button data-filter="alert" style="color: var(--danger);">🚨 Infrações Críticas</button>
+          <button data-filter="EXTERNAL_PASTE">📋 Colagens</button>
+          <button data-filter="PEN_DRIVE_DETECTED">💾 Pen Drive</button>
+          <button data-filter="WINDOW_BLURRED">🔄 Alt+Tab</button>
+        </div>
+
+        <div class="feed-list" id="eventsFeed">
+          <div class="empty-state">Nenhum evento registrado ainda.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Event Detail / Snippet Modal -->
+  <div class="modal-backdrop" id="eventModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Detalhes da Infração</h3>
+        <button class="modal-close" onclick="closeModal('eventModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Student History Modal -->
+  <div class="modal-backdrop" id="studentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="studentModalTitle">Histórico do Aluno</h3>
+        <button class="modal-close" onclick="closeModal('studentModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="studentModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    const state = {
+      students: new Map(),
+      events: [],
+      filter: 'all',
+      search: '',
+      soundEnabled: true,
+      selectedStudentId: null
+    };
+
+    // Web Audio Synthesizer for alerts
+    let audioCtx = null;
+    function playAlertBeep(isCritical) {
+      if (!state.soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (isCritical) {
+          // Double beep for critical alert
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.15); // A4
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        } else {
+          // Soft single chime
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        }
+      } catch (e) {
+        console.warn('Audio alert error:', e);
+      }
+    }
+
+    // Connect WebSocket to Proctor Endpoint
+    let ws = null;
+    function connectWs() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${location.host}?role=proctor`;
+
+      updateConnectionStatus(false, 'Conectando...');
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        updateConnectionStatus(true, 'Painel Conectado (Tempo Real)');
+      };
+
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          handleServerMessage(msg);
+        } catch (err) {
+          console.error('Erro ao processar mensagem do servidor:', err);
+        }
+      };
+
+      ws.onclose = () => {
+        updateConnectionStatus(false, 'Desconectado (Tentando reconectar...)');
+        setTimeout(connectWs, 3000);
+      };
+
+      ws.onerror = () => {
+        updateConnectionStatus(false, 'Erro de conexão');
+      };
+    }
+
+    function updateConnectionStatus(connected, text) {
+      const dot = document.getElementById('serverStatusDot');
+      const label = document.getElementById('serverStatusText');
+      if (connected) {
+        dot.classList.remove('disconnected');
+      } else {
+        dot.classList.add('disconnected');
+      }
+      label.textContent = text;
+    }
+
+    function handleServerMessage(msg) {
+      if (msg.type === 'SNAPSHOT') {
+        state.students.clear();
+        for (const s of msg.students) {
+          state.students.set(s.id, s);
+        }
+        state.events = msg.events || [];
+        renderAll();
+      } else if (msg.type === 'STUDENT_UPDATE') {
+        state.students.set(msg.student.id, msg.student);
+        renderStudents();
+        updateMetrics();
+      } else if (msg.type === 'EVENT') {
+        const { event, student } = msg;
+        if (student) {
+          state.students.set(student.id, student);
+        }
+        state.events.unshift(event);
+        if (state.events.length > 5000) state.events.pop();
+
+        if (event.severity === 'alert') {
+          playAlertBeep(true);
+        } else if (event.severity === 'warning') {
+          playAlertBeep(false);
+        }
+
+        renderStudents();
+        renderFeed();
+        updateMetrics();
+      }
+    }
+
+    // Rendering Helpers
+    function updateMetrics() {
+      const studentsArr = Array.from(state.students.values());
+      const activeCount = studentsArr.filter(s => s.status === 'online' || s.status === 'away').length;
+
+      let criticalCount = 0;
+      let warningCount = 0;
+      for (const s of studentsArr) {
+        criticalCount += (s.counts?.pastes || 0) + (s.counts?.usb || 0);
+        warningCount += (s.counts?.blurs || 0);
+      }
+
+      document.getElementById('metricTotalStudents').textContent = studentsArr.length;
+      document.getElementById('metricActiveStudents').textContent = activeCount;
+      document.getElementById('metricAlertsCount').textContent = criticalCount;
+      document.getElementById('metricWarningsCount').textContent = warningCount;
+      document.getElementById('studentsCount').textContent = studentsArr.length;
+      document.getElementById('eventsTotalCount').textContent = `${state.events.length} eventos`;
+    }
+
+    function renderStudents() {
+      const grid = document.getElementById('studentsGrid');
+      const studentsArr = Array.from(state.students.values());
+
+      const filtered = studentsArr.filter(s => {
+        if (!state.search) return true;
+        const q = state.search.toLowerCase();
+        return (s.name && s.name.toLowerCase().includes(q)) ||
+               (s.id && s.id.toLowerCase().includes(q)) ||
+               (s.hostname && s.hostname.toLowerCase().includes(q));
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-state">Nenhum aluno correspondente à busca.</div>';
+        return;
+      }
+
+      // Sort: Students with alerts first, then online, then offline
+      filtered.sort((a, b) => {
+        const aScore = (a.counts?.alerts || 0) * 10 + (a.status === 'online' ? 2 : a.status === 'away' ? 5 : 0);
+        const bScore = (b.counts?.alerts || 0) * 10 + (b.status === 'online' ? 2 : b.status === 'away' ? 5 : 0);
+        return bScore - aScore;
+      });
+
+      grid.innerHTML = filtered.map(s => {
+        const hasAlerts = (s.counts?.alerts || 0) > 0 || (s.counts?.pastes || 0) > 0 || (s.counts?.usb || 0) > 0;
+        let pillClass = 'pill-online';
+        let pillText = '🟢 Em Foco';
+
+        if (s.status === 'away') {
+          pillClass = 'pill-away';
+          const awaySec = s.blurStartedAt ? Math.round((Date.now() - s.blurStartedAt) / 1000) : s.awaySeconds;
+          pillText = `🟡 Fora (${awaySec}s)`;
+        } else if (s.status === 'offline') {
+          pillClass = 'pill-offline';
+          pillText = '⚪ Offline';
+        }
+
+        const fileName = s.activeFile ? s.activeFile.split(/[\\/]/).pop() : 'Nenhum arquivo ativo';
+
+        return `
+          <div class="student-card ${hasAlerts ? 'has-alerts' : ''}" onclick="openStudentModal('${s.id}')">
+            <div class="student-header">
+              <div>
+                <div class="student-title">${escapeHtml(s.name)}</div>
+                <div class="student-meta">${escapeHtml(s.username)}@${escapeHtml(s.hostname)} (${escapeHtml(s.ip)})</div>
+              </div>
+              <span class="student-pill ${pillClass}">${pillText}</span>
+            </div>
+
+            <div class="student-file" title="${escapeHtml(s.activeFile || '')}">
+              📝 ${escapeHtml(fileName)}
+            </div>
+
+            <div class="student-badges">
+              ${s.counts?.pastes > 0 ? `<span class="badge-count badge-danger">🚨 ${s.counts.pastes} Colagem(ns)</span>` : ''}
+              ${s.counts?.usb > 0 ? `<span class="badge-count badge-danger">💾 ${s.counts.usb} Pen Drive</span>` : ''}
+              ${s.counts?.blurs > 0 ? `<span class="badge-count badge-warning">⚠️ ${s.counts.blurs} Alt-Tabs</span>` : ''}
+              ${!hasAlerts && s.counts?.blurs === 0 ? `<span class="badge-count" style="background: var(--success-bg); color: var(--success);">🛡️ 0 Infrações</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFeed() {
+      const feed = document.getElementById('eventsFeed');
+      const filtered = state.events.filter(e => {
+        if (state.filter === 'all') return true;
+        if (state.filter === 'alert') return e.severity === 'alert';
+        return e.eventType === state.filter;
+      });
+
+      if (filtered.length === 0) {
+        feed.innerHTML = '<div class="empty-state">Nenhum evento para este filtro.</div>';
+        return;
+      }
+
+      feed.innerHTML = filtered.slice(0, 100).map(e => {
+        const time = new Date(e.timestamp).toLocaleTimeString();
+        let icon = 'ℹ️';
+        let title = e.eventType;
+
+        switch (e.eventType) {
+          case 'EXTERNAL_PASTE':
+            icon = '🚨';
+            title = 'Colagem Externa Detectada (ChatGPT / Web)';
+            break;
+          case 'SUSPICIOUS_TYPING_BURST':
+            icon = '⚡';
+            title = 'Inserção Súbita de Código em Bloco';
+            break;
+          case 'PEN_DRIVE_DETECTED':
+            icon = '💾';
+            title = 'Pen Drive / Mídia Removível Conectada';
+            break;
+          case 'WINDOW_BLURRED':
+            icon = '🔄';
+            title = 'Saiu do VS Code (Alt+Tab)';
+            break;
+          case 'WINDOW_FOCUSED':
+            icon = '👀';
+            title = `Retornou ao VS Code (${e.details?.durationSeconds || 0}s fora)`;
+            break;
+          case 'EXTERNAL_FILE_ACCESS':
+            icon = '📂';
+            title = 'Acesso a Arquivo Fora da Pasta da Prova';
+            break;
+          case 'STUDENT_CONNECTED':
+            icon = '🎓';
+            title = 'Aluno Iniciou a Prova';
+            break;
+        }
+
+        const previewSnippet = e.details?.snippetPreview || '';
+
+        return `
+          <div class="feed-item severity-${e.severity}" onclick="openEventModal('${e.id}')">
+            <div class="feed-header">
+              <span class="feed-student">${icon} ${escapeHtml(e.studentName || 'Aluno')}</span>
+              <span class="feed-time">${time}</span>
+            </div>
+            <div class="feed-body">
+              <strong>${title}</strong> — ${escapeHtml(e.details?.reason || '')}
+              ${e.details?.file ? `<br><small style="color: var(--accent);">Arquivo: ${escapeHtml(e.details.file.split(/[\\/]/).pop())} (Linha ${e.details.line || 1})</small>` : ''}
+            </div>
+            ${previewSnippet ? `<div class="feed-code-preview">${escapeHtml(previewSnippet)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAll() {
+      updateMetrics();
+      renderStudents();
+      renderFeed();
+    }
+
+    // Modals
+    window.openEventModal = function(eventId) {
+      const event = state.events.find(e => e.id === eventId);
+      if (!event) return;
+
+      const modal = document.getElementById('eventModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      title.innerHTML = `${event.severity === 'alert' ? '🚨' : event.severity === 'warning' ? '⚠️' : 'ℹ️'} Detalhes do Evento: ${event.eventType}`;
+
+      let codeBlockHtml = '';
+      if (event.details?.fullSnippet || event.details?.snippetPreview) {
+        const code = event.details.fullSnippet || event.details.snippetPreview;
+        codeBlockHtml = `
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="color: var(--danger);">Código Interceptado de Fonte Externa:</strong>
+              <small>${event.details.charCount || code.length} caracteres, ${event.details.lineCount || code.split('\n').length} linhas</small>
+            </div>
+            <div class="code-viewer">${escapeHtml(code)}</div>
+          </div>
+        `;
+      }
+
+      body.innerHTML = `
+        <table class="meta-table">
+          <tr><td>Aluno:</td><td><strong>${escapeHtml(event.studentName)}</strong> (${escapeHtml(event.studentId)})</td></tr>
+          <tr><td>Data e Hora:</td><td>${new Date(event.timestamp).toLocaleString()}</td></tr>
+          <tr><td>Gravidade:</td><td><span class="badge-count badge-${event.severity === 'alert' ? 'danger' : 'warning'}">${event.severity.toUpperCase()}</span></td></tr>
+          <tr><td>Motivo / Descrição:</td><td>${escapeHtml(event.details?.reason || 'Sem descrição')}</td></tr>
+          ${event.details?.file ? `<tr><td>Arquivo Afetado:</td><td><code>${escapeHtml(event.details.file)}</code> (Linha ${event.details.line || '-'})</td></tr>` : ''}
+          ${event.details?.durationSeconds ? `<tr><td>Tempo Fora da Tela:</td><td>${event.details.durationSeconds} segundos</td></tr>` : ''}
+          <tr><td>Máquina / Host:</td><td>${escapeHtml(event.machineInfo?.username || '')}@${escapeHtml(event.machineInfo?.hostname || '')} (${escapeHtml(event.machineInfo?.platform || '')})</td></tr>
+        </table>
+        ${codeBlockHtml}
+      `;
+
+      modal.classList.add('open');
+    };
+
+    window.openStudentModal = function(studentId) {
+      const student = state.students.get(studentId);
+      if (!student) return;
+
+      const modal = document.getElementById('studentModal');
+      const title = document.getElementById('studentModalTitle');
+      const body = document.getElementById('studentModalBody');
+
+      title.innerHTML = `🎓 Prontuário do Aluno: ${escapeHtml(student.name)}`;
+
+      const studentEvents = state.events.filter(e => e.studentId === studentId);
+
+      body.innerHTML = `
+        <table class="meta-table">
+          <tr><td>Aluno:</td><td><strong>${escapeHtml(student.name)}</strong></td></tr>
+          <tr><td>ID / Matrícula:</td><td>${escapeHtml(student.id)}</td></tr>
+          <tr><td>Status Atual:</td><td><strong>${student.status.toUpperCase()}</strong></td></tr>
+          <tr><td>Computador / IP:</td><td>${escapeHtml(student.username)}@${escapeHtml(student.hostname)} (${escapeHtml(student.ip)})</td></tr>
+          <tr><td>Arquivo em Edição:</td><td><code>${escapeHtml(student.activeFile || 'Nenhum')}</code></td></tr>
+          <tr><td>Total de Colagens Externas:</td><td style="color: var(--danger); font-weight: bold;">${student.counts?.pastes || 0}</td></tr>
+          <tr><td>Pen Drives Detectados:</td><td style="color: var(--danger); font-weight: bold;">${student.counts?.usb || 0}</td></tr>
+          <tr><td>Saídas da Janela (Alt+Tab):</td><td style="color: var(--warning); font-weight: bold;">${student.counts?.blurs || 0} (${student.awaySeconds || 0}s acumulados)</td></tr>
+        </table>
+
+        <h4 style="margin-top: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Linha do Tempo de Eventos (${studentEvents.length})</h4>
+        <div style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+          ${studentEvents.length === 0 ? '<div class="empty-state">Nenhum evento registrado para este aluno.</div>' : ''}
+          ${studentEvents.map(e => `
+            <div style="background: var(--bg-dark); padding: 0.5rem 0.75rem; border-radius: 6px; border-left: 3px solid var(--${e.severity === 'alert' ? 'danger' : e.severity === 'warning' ? 'warning' : 'accent'}); font-size: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; color: var(--text-muted);">
+                <span>${e.eventType}</span>
+                <span>${new Date(e.timestamp).toLocaleTimeString()}</span>
+              </div>
+              <div style="color: var(--text-main); margin-top: 0.2rem;">${escapeHtml(e.details?.reason || '')}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      modal.classList.add('open');
+    };
+
+    window.closeModal = function(id) {
+      document.getElementById(id).classList.remove('open');
+    };
+
+    // Close on backdrop click or ESC
+    document.querySelectorAll('.modal-backdrop').forEach(b => {
+      b.addEventListener('click', (e) => {
+        if (e.target === b) b.classList.remove('open');
+      });
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.classList.remove('open'));
+      }
+    });
+
+    // Search and Filters
+    document.getElementById('searchStudent').addEventListener('input', (e) => {
+      state.search = e.target.value;
+      renderStudents();
+    });
+
+    document.querySelectorAll('.feed-controls button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.feed-controls button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.filter = btn.getAttribute('data-filter');
+        renderFeed();
+      });
+    });
+
+    // Sound toggle
+    const toggleSoundBtn = document.getElementById('toggleSoundBtn');
+    toggleSoundBtn.addEventListener('click', () => {
+      state.soundEnabled = !state.soundEnabled;
+      toggleSoundBtn.textContent = state.soundEnabled ? '🔔 Sons Ativos' : '🔕 Mudo';
+      toggleSoundBtn.style.color = state.soundEnabled ? 'var(--text-main)' : 'var(--text-sub)';
+    });
+
+    // Export buttons
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      window.location.href = '/api/export?format=csv';
+    });
+    document.getElementById('exportJsonBtn').addEventListener('click', () => {
+      window.location.href = '/api/export?format=json';
+    });
+
+    // Clear session button
+    document.getElementById('clearBtn').addEventListener('click', async () => {
+      if (confirm('Atenção: Deseja realmente zerar todos os dados da prova atual no painel?')) {
+        await fetch('/api/clear', { method: 'POST' });
+      }
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initialize
+    connectWs();
+  </script>
+</body>
+</html>

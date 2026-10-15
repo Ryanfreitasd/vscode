@@ -37,6 +37,7 @@
 	"urlProtocol": "code-oss",
 	"agentsTelemetryAppName": "agents",
 	"webviewContentExternalBaseUrlTemplate": "https://{{uuid}}.vscode-cdn.net/insider/ef65ac1ba57f57f2a3961bfe94aa20481caca4c6/out/vs/workbench/contrib/webview/browser/pre/",
+	"builtInExtensionsEnabledWithAutoUpdates": [],
 	"builtInExtensions": [
 		{
 			"name": "ms-vscode.js-debug-companion",
@@ -85,84 +86,185 @@
 				},
 				"publisherDisplayName": "Microsoft"
 			}
-		}
-	],
-	"defaultChatAgent": {
-		"extensionId": "GitHub.copilot",
-		"chatExtensionId": "GitHub.copilot-chat",
-		"chatExtensionOutputId": "GitHub.copilot-chat.GitHub Copilot Chat.log",
-		"chatExtensionOutputExtensionStateCommand": "github.copilot.debug.extensionState",
-		"documentationUrl": "https://aka.ms/github-copilot-overview",
-		"termsStatementUrl": "https://aka.ms/github-copilot-terms-statement",
-		"privacyStatementUrl": "https://aka.ms/github-copilot-privacy-statement",
-		"skusDocumentationUrl": "https://aka.ms/github-copilot-plans",
-		"optimizeUsageDocumentationUrl": "https://aka.ms/token-usage-tips",
-		"publicCodeMatchesUrl": "https://aka.ms/github-copilot-match-public-code",
-		"managePlanUrl": "https://aka.ms/github-copilot-manage-plan",
-		"upgradePlanUrl": "https://aka.ms/github-copilot-upgrade-plan",
-		"signUpUrl": "https://aka.ms/github-sign-up",
-		"provider": {
-			"default": {
-				"id": "github",
-				"name": "GitHub"
-			},
-			"enterprise": {
-				"id": "github-enterprise",
-				"name": "GHE"
-			},
-			"google": {
-				"id": "google",
-				"name": "Google"
-			},
-			"apple": {
-				"id": "apple",
-				"name": "Apple"
-			},
-			"microsoft": {
-				"id": "microsoft",
-				"name": "Microsoft"
+		},
+		{
+			"name": "ms-azuretools.vscode-containers",
+			"version": "2.5.2",
+			"sha256": "111a7020ec4b6717a558f445630b1a11c6e73b15b7702def18e288920f76cedc",
+			"repo": "https://github.com/microsoft/vscode-containers",
+			"metadata": {
+				"id": "2cd1d691-3d69-4d2d-ae39-fda4bc4cfd3d",
+				"publisherId": {
+					"publisherId": "52b787f2-79a9-4f32-99b4-393afe3005d3",
+					"publisherName": "ms-azuretools",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
 			}
 		},
-		"providerExtensionId": "vscode.github-authentication",
-		"providerUriSetting": "github-enterprise.uri",
-		"providerScopes": [
-			[
-				"read:user",
-				"user:email",
-				"repo",
-				"workflow"
-			],
-			[
-				"user:email"
-			],
-			[
-				"read:user"
-			]
-		],
-		"entitlementUrl": "https://api.github.com/copilot_internal/user",
-		"entitlementSignupLimitedUrl": "https://api.github.com/copilot_internal/subscribe_limited_user",
-		"chatQuotaExceededContext": "github.copilot.chat.quotaExceeded",
-		"completionsQuotaExceededContext": "github.copilot.completions.quotaExceeded",
-		"walkthroughCommand": "github.copilot.open.walkthrough",
-		"completionsMenuCommand": "github.copilot.toggleStatusMenu",
-		"chatRefreshTokenCommand": "github.copilot.refreshToken",
-		"generateCommitMessageCommand": "github.copilot.git.generateCommitMessage",
-		"resolveMergeConflictsCommand": "github.copilot.git.resolveMergeConflicts",
-		"completionsAdvancedSetting": "github.copilot.advanced",
-		"completionsEnablementSetting": "github.copilot.enable",
-		"nextEditSuggestionsSetting": "github.copilot.nextEditSuggestions.enabled",
-		"tokenEntitlementUrl": "https://api.github.com/copilot_internal/v2/token",
-		"mcpRegistryDataUrl": "https://api.github.com/copilot/mcp_registry",
-		"mcpConnectorsUrl": "https://api.github.com/copilot-connectors/api/v1",
-		"managedSettingsUrl": "https://api.github.com/copilot_internal/managed_settings"
-	},
+		{
+			"name": "Dart-Code.dart-code",
+			"version": "3.145.20260930",
+			"sha256": "1cb162aa1d96784bb20e17e2a6ed079172a093410c86af461bc00a1324ff3ceb",
+			"repo": "https://github.com/Dart-Code/Dart-Code.git",
+			"metadata": {
+				"id": "f57f68ea-9ee8-42b5-9a97-041d3e4278c4",
+				"publisherId": {
+					"publisherId": "a606ecbb-a8fb-4c35-b29a-5e8842d82af2",
+					"publisherName": "Dart-Code",
+					"displayName": "Dart Code",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Dart Code"
+			}
+		},
+		{
+			"name": "Dart-Code.flutter",
+			"version": "3.145.20260930",
+			"sha256": "c6339d35767e03c7f87906f2ffd10f038588b83d4ebdb7e74bf04a99db64fa45",
+			"repo": "https://github.com/Dart-Code/Flutter.git",
+			"metadata": {
+				"id": "f6c3ec04-6057-4d9c-b997-69cba07a6158",
+				"publisherId": {
+					"publisherId": "a606ecbb-a8fb-4c35-b29a-5e8842d82af2",
+					"publisherName": "Dart-Code",
+					"displayName": "Dart Code",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Dart Code"
+			}
+		},
+		{
+			"name": "firsttris.vscode-jest-runner",
+			"version": "0.4.151",
+			"sha256": "e6bd5344f7f438daff72c472c25432d145798dfd5aaec1ead04261d51471d4f7",
+			"repo": "https://github.com/firsttris/vscode-jest-runner.git",
+			"metadata": {
+				"id": "13cd6cd6-3da6-4eb8-8d81-b47e6e710e59",
+				"publisherId": {
+					"publisherId": "d3042740-ad00-46f8-87c9-ee28ad76da0e",
+					"publisherName": "firsttris",
+					"displayName": "firsttris",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "firsttris"
+			}
+		},
+		{
+			"name": "vscjava.vscode-java-pack",
+			"version": "0.31.2026060907",
+			"sha256": "4033b300482c2aaa5819d4ca3a8f86e169256d27f1ed03502283acc330f839b4",
+			"repo": "https://github.com/Microsoft/vscode-java-pack",
+			"metadata": {
+				"id": "96f11e1f-1a46-4592-b084-f025b2c2a81f",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		},
+		{
+			"name": "redhat.java",
+			"version": "1.57.2026093008",
+			"sha256": "b849920f591df1fb4a1840e649ae0ff7296ea0255ce684f904a6ba69680aa238",
+			"repo": "https://github.com/redhat-developer/vscode-java",
+			"metadata": {
+				"id": "198a707e-28af-4e84-8610-6e2f628dd12d",
+				"publisherId": {
+					"publisherId": "eed56242-9699-4317-8bc7-e9f4b9bdd3ff",
+					"publisherName": "redhat",
+					"displayName": "Red Hat",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Red Hat"
+			}
+		},
+		{
+			"name": "vscjava.vscode-java-debug",
+			"version": "0.59.2026092407",
+			"sha256": "78c0341697fd00fbf75205d53c5fef1dbfe877acf405d7b1a5d99065c8b85e67",
+			"repo": "https://github.com/Microsoft/vscode-java-debug.git",
+			"metadata": {
+				"id": "61fcd0cf-64d7-4836-8d6b-d55f4fb83281",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		},
+		{
+			"name": "vscjava.vscode-java-test",
+			"version": "0.46.2026072702",
+			"sha256": "4bdd592613ce093b55a08ebd8de689363be442c76e8adc6d308f3cc6b16887ca",
+			"repo": "https://github.com/Microsoft/vscode-java-test",
+			"metadata": {
+				"id": "67c06b0d-1891-42ca-b2a8-113e79bff069",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		},
+		{
+			"name": "vscjava.vscode-maven",
+			"version": "0.46.0",
+			"sha256": "ba2b5273bf0e8ea936b54fdf28a73a31da0718467b7194374da78213b23f66f0",
+			"repo": "https://github.com/Microsoft/vscode-maven.git",
+			"metadata": {
+				"id": "b0f06c6b-24fb-4d7b-bd79-bc5e2fa17312",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		},
+		{
+			"name": "vscjava.vscode-gradle",
+			"version": "3.18.0",
+			"sha256": "c9b31e8c824447d1c7561d73fad6b382f4345086bc78aa0905bec938b5352a9c",
+			"repo": "https://github.com/microsoft/vscode-gradle/",
+			"metadata": {
+				"id": "a226f06e-9b5e-493b-b92a-553d3572f969",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		},
+		{
+			"name": "vscjava.vscode-java-dependency",
+			"version": "0.27.2026092100",
+			"sha256": "fc28e83f997247fb38f9d7beed60d3bed6b8c63aef2ae7892ff20b58a56ba0cf",
+			"repo": "https://github.com/Microsoft/vscode-java-dependency.git",
+			"metadata": {
+				"id": "7865e561-1c83-410e-9b99-aabada597a7e",
+				"publisherId": {
+					"publisherId": "bae08b87-578e-41ec-ab1c-0b036e7add88",
+					"publisherName": "vscjava",
+					"displayName": "Microsoft",
+					"flags": "verified"
+				},
+				"publisherDisplayName": "Microsoft"
+			}
+		}
+	],
 	"trustedExtensionAuthAccess": {
-		"github": [
-			"GitHub.copilot-chat"
-		],
-		"github-enterprise": [
-			"GitHub.copilot-chat"
-		],
 		"microsoft": [
 			"vscode.github-authentication"
 		]
@@ -242,9 +344,23 @@
 			"type": "light"
 		}
 	],
-	"builtInExtensionsEnabledWithAutoUpdates": [
-		"GitHub.copilot-chat"
-	],
-	"sessionsWindowAllowedExtensions": [],
-	"voiceWsUrl": "wss://falcon-caas.mai.microsoft.com/voice-code/api/v1/realtime/voice"
+	"defaultChatAgent": {
+		"extensionId": "",
+		"chatExtensionId": "",
+		"provider": {
+			"default": {
+				"id": "none",
+				"name": "None"
+			},
+			"enterprise": {
+				"id": "none",
+				"name": "None"
+			},
+			"microsoft": {
+				"id": "none",
+				"name": "None"
+			}
+		},
+		"providerScopes": []
+	}
 }

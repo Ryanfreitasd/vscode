@@ -123,7 +123,7 @@ export class ChatStatusBarEntry extends Disposable implements IWorkbenchContribu
 	private readonly dashboardTooltip: IStatusbarEntry['tooltip'];
 	private promo: ChatStatusPromo | undefined;
 
-	private quotaResumeState: ChatQuotaResumeState;
+	private quotaResumeState: ChatQuotaResumeState = 'none';
 	private readonly quotaResetTimer = this._register(new MutableDisposable());
 	private readonly quotaRefresh = this._register(new MutableDisposable());
 	private readonly clearResumedScheduler = this._register(new MutableDisposable());
@@ -141,8 +141,11 @@ export class ChatStatusBarEntry extends Disposable implements IWorkbenchContribu
 		@ILifecycleService lifecycleService: ILifecycleService,
 	) {
 		super();
-
 		this.quotaResumeState = this.readPersistedQuotaResumeState();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 		lifecycleService.when(LifecyclePhase.Restored).then(() => {
 			if (!this._store.isDisposed) {
 				this.promo = this._register(this.instantiationService.createInstance(ChatStatusPromo));

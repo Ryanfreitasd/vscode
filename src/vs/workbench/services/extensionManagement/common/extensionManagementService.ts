@@ -310,11 +310,19 @@ export class ExtensionManagementService extends CommontExtensionManagementServic
 	}
 
 	async install(vsix: URI, options?: InstallOptions): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const manifest = await this.getManifest(vsix);
 		return this.installVSIX(vsix, manifest, options);
 	}
 
 	async installVSIX(vsix: URI, manifest: IExtensionManifest, options?: InstallOptions): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const serversToInstall = this.getServersToInstall(manifest);
 		if (serversToInstall?.length) {
 			await this.checkForWorkspaceTrust(manifest, false);
@@ -347,6 +355,10 @@ export class ExtensionManagementService extends CommontExtensionManagementServic
 	}
 
 	async installFromLocation(location: URI): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		if (location.scheme === Schemas.file) {
 			if (this.extensionManagementServerService.localExtensionManagementServer) {
 				return this.extensionManagementServerService.localExtensionManagementServer.extensionManagementService.installFromLocation(location, this.userDataProfileService.currentProfile.extensionsResource);
@@ -444,6 +456,10 @@ export class ExtensionManagementService extends CommontExtensionManagementServic
 	}
 
 	async installGalleryExtensions(extensions: InstallExtensionInfo[]): Promise<InstallExtensionResult[]> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const results = new Map<string, InstallExtensionResult>();
 
 		const extensionsByServer = new Map<IExtensionManagementServer, InstallExtensionInfo[]>();
@@ -510,6 +526,10 @@ export class ExtensionManagementService extends CommontExtensionManagementServic
 	}
 
 	async installFromGallery(gallery: IGalleryExtension, installOptions?: InstallOptions, servers?: IExtensionManagementServer[]): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		const manifest = await this.extensionGalleryService.getManifest(gallery, CancellationToken.None);
 		if (!manifest) {
 			throw new Error(localize('Manifest is not found', "Installing Extension {0} failed: Manifest is not found.", gallery.displayName || gallery.name));
@@ -573,6 +593,10 @@ export class ExtensionManagementService extends CommontExtensionManagementServic
 	}
 
 	async installResourceExtension(extension: IResourceExtension, installOptions: InstallOptions): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		if (!this.canInstallResourceExtension(extension)) {
 			throw new Error('This extension cannot be installed in the current workspace.');
 		}

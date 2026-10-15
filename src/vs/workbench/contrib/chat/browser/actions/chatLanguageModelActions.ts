@@ -17,7 +17,7 @@ import { IExtensionsWorkbenchService } from '../../../extensions/common/extensio
 import { IProductService } from '../../../../../platform/product/common/productService.js';
 import { Codicon } from '../../../../../base/common/codicons.js';
 import { ThemeIcon } from '../../../../../base/common/themables.js';
-import { ChatContextKeys } from '../../common/actions/chatContextKeys.js';
+import { ContextKeyExpr } from '../../../../../platform/contextkey/common/contextkey.js';
 import { ILanguageModelsProviderGroup } from '../../common/languageModelsConfiguration.js';
 
 class ManageLanguageModelAuthenticationAction extends Action2 {
@@ -28,12 +28,13 @@ class ManageLanguageModelAuthenticationAction extends Action2 {
 			id: ManageLanguageModelAuthenticationAction.ID,
 			title: localize2('manageLanguageModelAuthentication', 'Manage Language Model Access...'),
 			category: CHAT_CATEGORY,
-			precondition: ChatContextKeys.enabled,
+			precondition: ContextKeyExpr.false(),
 			menu: [{
 				id: MenuId.AccountsContext,
 				order: 100,
+				when: ContextKeyExpr.false(),
 			}],
-			f1: true
+			f1: false
 		});
 	}
 

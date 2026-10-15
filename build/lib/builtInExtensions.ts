@@ -6,7 +6,6 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import rimraf from 'rimraf';
 import es from 'event-stream';
 import { rename } from './gulp/facade.ts';
 import vfs from 'vinyl-fs';
@@ -96,7 +95,7 @@ function getExtensionDownloadStream(extension: IExtensionDefinition) {
 	} else if (productjson.extensionsGallery?.serviceUrl) {
 		input = ext.fromMarketplace(productjson.extensionsGallery.serviceUrl, extension);
 	} else {
-		input = ext.fromGithub(extension, { latest: isInsiders() });
+		input = ext.fromMarketplace('https://marketplace.visualstudio.com/_apis/public/gallery', extension);
 	}
 
 	return input.pipe(rename(p => p.dirname = `${extension.name}/${p.dirname}`));
@@ -133,14 +132,14 @@ export function getExtensionStream(extension: IExtensionDefinition) {
 }
 
 function syncMarketplaceExtension(extension: IExtensionDefinition): Stream {
-	const galleryServiceUrl = productjson.extensionsGallery?.serviceUrl;
-	const source = ansiColors.blue(galleryServiceUrl ? '[marketplace]' : '[github]');
+	const galleryServiceUrl = productjson.extensionsGallery?.serviceUrl || 'https://marketplace.visualstudio.com/_apis/public/gallery';
+	const source = ansiColors.blue('[marketplace]');
 	if (isUpToDate(extension)) {
 		log(source, `${extension.name}@${extension.version}`, ansiColors.green('✔︎'));
 		return es.readArray([]);
 	}
 
-	rimraf.sync(getExtensionPath(extension));
+	fs.rmSync(getExtensionPath(extension), { recursive: true, force: true });
 
 	return getExtensionDownloadStream(extension)
 		.pipe(vfs.dest('.build/builtInExtensions'))

@@ -143,6 +143,10 @@ export class ExtensionManagementService extends AbstractExtensionManagementServi
 	}
 
 	async install(vsix: URI, options: InstallOptions = {}): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(nls.localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		this.logService.trace('ExtensionManagementService#install', vsix.toString());
 
 		const { location, cleanup } = await this.downloadVsix(vsix);
@@ -174,6 +178,10 @@ export class ExtensionManagementService extends AbstractExtensionManagementServi
 	}
 
 	async installFromLocation(location: URI, profileLocation: URI): Promise<ILocalExtension> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(nls.localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		this.logService.trace('ExtensionManagementService#installFromLocation', location.toString());
 		const local = await this.extensionsScanner.scanUserExtensionAtLocation(location);
 		if (!local || !local.manifest.name || !local.manifest.version) {
@@ -185,6 +193,10 @@ export class ExtensionManagementService extends AbstractExtensionManagementServi
 	}
 
 	async installExtensionsFromProfile(extensions: IExtensionIdentifier[], fromProfileLocation: URI, toProfileLocation: URI): Promise<ILocalExtension[]> {
+		const enabled = Boolean(false);
+		if (!enabled) {
+			throw new Error(nls.localize('installDisabled', "Extension installation is permanently disabled in this environment."));
+		}
 		this.logService.trace('ExtensionManagementService#installExtensionsFromProfile', extensions, fromProfileLocation.toString(), toProfileLocation.toString());
 		const extensionsToInstall = (await this.getInstalled(ExtensionType.User, fromProfileLocation)).filter(e => extensions.some(id => areSameExtensions(id, e.identifier)));
 		if (extensionsToInstall.length) {

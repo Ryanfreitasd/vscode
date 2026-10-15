@@ -97,7 +97,8 @@ export class ChatSetupContribution extends Disposable implements IWorkbenchContr
 
 		const context = chatEntitlementService.context?.value;
 		const requests = chatEntitlementService.requests?.value;
-		if (!context || !requests) {
+		const enabled = Boolean(false);
+		if (!enabled || !context || !requests) {
 			return; // disabled
 		}
 

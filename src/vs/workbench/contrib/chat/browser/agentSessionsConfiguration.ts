@@ -105,6 +105,7 @@ for (const key of [ChatConfiguration.AgentsParallelWorkBannerEnabled, ChatConfig
 	}]);
 }
 
+if (false as boolean) {
 Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration).registerConfiguration({
 	id: 'chat',
 	properties: {
@@ -136,6 +137,7 @@ Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration).regis
 		},
 	},
 });
+}
 
 Registry.as<IConfigurationMigrationRegistry>(WorkbenchConfigurationExtensions.ConfigurationMigration).registerConfigurationMigrations([{
 	key: legacyAutoArchiveMergedSessionsAfterDaysSetting,

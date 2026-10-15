@@ -1,0 +1,56 @@
+name: Build Univertix Exam Shield Windows Portable
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - feature/vscode-portable-monitor
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    name: Build Windows x64 Portable
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Preinstall & Dependencies
+        shell: bash
+        env:
+          npm_config_arch: x64
+          VSCODE_ARCH: x64
+          npm_config_foreground_scripts: 'true'
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '0'
+        run: |
+          node build/npm/preinstall.ts || true
+          npm ci || npm install
+
+      - name: Download Built-in Extensions
+        shell: bash
+        run: |
+          node build/lib/builtInExtensions.ts || true
+
+      - name: Compile Windows Portable VS Code
+        shell: bash
+        run: |
+          node scripts/build-portable-vscode.mjs win32
+
+      - name: Upload Windows Portable Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Univertix-VSCode-win32-x64-portable
+          path: |
+            Univertix-VSCode-win32-x64-portable.zip
+            ../Univertix-VSCode-win32-x64-portable.zip
+          retention-days: 14

@@ -21,6 +21,7 @@ export const enum InlineChatConfigKeys {
 	AskInChat = 'inlineChat.askInChat',
 }
 
+if (false as boolean) {
 Registry.as<IConfigurationRegistry>(Extensions.Configuration).registerConfiguration({
 	id: 'editor',
 	properties: {
@@ -64,6 +65,7 @@ Registry.as<IConfigurationRegistry>(Extensions.Configuration).registerConfigurat
 		},
 	}
 });
+}
 
 
 export const INLINE_CHAT_ID = 'editor.contrib.inlineChatController';

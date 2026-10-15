@@ -190,36 +190,11 @@ export abstract class AbstractUpdateService extends Disposable implements IUpdat
 	 * https://github.com/microsoft/vscode/issues/89784
 	 */
 	protected async initialize(): Promise<void> {
-		if (!this.environmentMainService.isBuilt) {
-			this.setDisabledPermanently(DisablementReason.NotBuilt);
-			return; // updates are never enabled when running out of sources
-		}
-
-		await this.trackVersionChange();
-
-		if (this.environmentMainService.disableUpdates) {
-			this.setDisabledPermanently(DisablementReason.DisabledByEnvironment);
-			this.logService.info('update#ctor - updates are disabled by the environment');
-			return;
-		}
-
-		if (!this.productService.updateUrl || !this.productService.commit) {
-			this.setDisabledPermanently(DisablementReason.MissingConfiguration);
-			this.logService.info('update#ctor - updates are disabled as there is no update URL');
-			return;
-		}
-
-		await this.meteredConnectionService.whenConnectionStateInitialized;
-
-		// React to runtime `update.mode`/policy changes so switching to/from `none` applies without a restart.
-		this._register(this.configurationService.onDidChangeConfiguration(e => {
-			if (e.affectsConfiguration('update.mode')) {
-				this.reconfigure().catch(err => this.logService.error('update#reconfigure - failed to apply update mode change', err));
-			}
-		}));
-
-		// Apply the currently configured update mode.
-		await this.reconfigure();
+		this.setDisabledPermanently(DisablementReason.DisabledByEnvironment);
+		this.logService.info('update#ctor - updates are permanently disabled');
+		await this.trackVersionChange().catch(() => {});
+		await this.reconfigure().catch(() => {});
+		return;
 	}
 
 	/**

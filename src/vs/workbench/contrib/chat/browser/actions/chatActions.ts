@@ -1826,10 +1826,7 @@ MenuRegistry.appendMenuItem(MenuId.EditorContext, {
 	group: '1_chat',
 	order: 5,
 	title: localize('generateCode', "Generate Code"),
-	when: ContextKeyExpr.and(
-		ChatContextKeys.Setup.hidden.negate(),
-		ChatContextKeys.Setup.disabledInWorkspace.negate(),
-	)
+	when: ContextKeyExpr.false()
 });
 
 // --- Chat Default Visibility

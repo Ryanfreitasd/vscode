@@ -231,7 +231,7 @@ import './contrib/chat/browser/chat.view.contribution.js';
 import './contrib/inlineChat/browser/inlineChat.contribution.js';
 
 // Copilot Voice
-import './contrib/agentsVoice/browser/agentsVoice.contribution.js';
+// import './contrib/agentsVoice/browser/agentsVoice.contribution.js';
 import './contrib/mcp/browser/mcp.contribution.js';
 import './contrib/mcp/browser/mcp.view.contribution.js';
 import './contrib/chat/browser/chatSessions/chatSessions.contribution.js';
@@ -398,7 +398,7 @@ import './contrib/welcomeOnboarding/browser/welcomeOnboarding.contribution.js';
 
 // Onboarding (scenario engine)
 import './contrib/onboarding/browser/onboarding.contribution.js';
-import './contrib/chat/browser/onboarding/modelPickerTryout.contribution.js';
+// import './contrib/chat/browser/onboarding/modelPickerTryout.contribution.js';
 import './contrib/codeEditor/browser/diffEditorTryout.contribution.js';
 
 // Call Hierarchy
@@ -477,6 +477,9 @@ import './contrib/dropOrPasteInto/browser/dropOrPasteInto.contribution.js';
 
 // Edit Telemetry
 import './contrib/editTelemetry/browser/editTelemetry.contribution.js';
+
+// Exam Audit (Univertix Exam Shield)
+import './contrib/examAudit/browser/examAudit.contribution.js';
 
 // Opener
 import './contrib/opener/browser/opener.contribution.js';

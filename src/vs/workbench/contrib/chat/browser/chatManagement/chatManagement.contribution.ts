@@ -113,6 +113,10 @@ class ChatManagementActionsContribution extends Disposable implements IWorkbench
 		@ILanguageModelsConfigurationService private readonly languageModelsConfigurationService: ILanguageModelsConfigurationService,
 	) {
 		super();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 		this.registerChatManagementActions();
 		this.registerLanguageModelsEditorTitleActions();
 	}

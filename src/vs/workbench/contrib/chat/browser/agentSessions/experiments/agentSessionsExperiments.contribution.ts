@@ -13,10 +13,7 @@ import { AgentTitleBarStatusService, IAgentTitleBarStatusService } from './agent
 import { Codicon } from '../../../../../../base/common/codicons.js';
 import { localize } from '../../../../../../nls.js';
 import { ContextKeyExpr } from '../../../../../../platform/contextkey/common/contextkey.js';
-import { ProductQualityContext } from '../../../../../../platform/contextkey/common/contextkeys.js';
-import { InEditorZenModeContext } from '../../../../../common/contextkeys.js';
 import { ChatAgentLocation, ChatConfiguration } from '../../../common/constants.js';
-import { ChatContextKeys } from '../../../common/actions/chatContextKeys.js';
 import { Disposable, DisposableStore, IDisposable } from '../../../../../../base/common/lifecycle.js';
 import { IChatWidget, IChatWidgetService } from '../../chat.js';
 import { IConfigurationService } from '../../../../../../platform/configuration/common/configuration.js';
@@ -50,6 +47,10 @@ class AgentSessionReadyContribution extends Disposable implements IWorkbenchCont
 		@IChatEditingService private readonly chatEditingService: IChatEditingService,
 	) {
 		super();
+		const enabled = Boolean(false);
+		if (!enabled) {
+			return;
+		}
 
 		// Monitor existing widgets
 		for (const widget of this.chatWidgetService.getAllWidgets()) {
@@ -255,12 +256,7 @@ MenuRegistry.appendMenuItem(MenuId.CommandCenter, {
 	submenu: MenuId.AgentsTitleBarControlMenu,
 	title: localize('agentsControl', "Agents"),
 	icon: Codicon.chatSparkle,
-	when: ContextKeyExpr.and(
-		ChatContextKeys.enabled,
-		ContextKeyExpr.notEquals(`config.${ChatConfiguration.AgentStatusEnabled}`, 'hidden'),
-		ContextKeyExpr.notEquals(`config.${ChatConfiguration.AgentStatusEnabled}`, false),
-		InEditorZenModeContext.negate()
-	),
+	when: ContextKeyExpr.false(),
 	order: 10002 // to the right of the chat button
 });
 
@@ -270,13 +266,7 @@ MenuRegistry.appendMenuItem(MenuId.TitleBar, {
 	title: localize('title4', "Chat"),
 	group: 'navigation',
 	icon: Codicon.chatSparkle,
-	when: ContextKeyExpr.and(
-		ChatContextKeys.supported,
-		ContextKeyExpr.and(
-			ChatContextKeys.Setup.hidden.negate(),
-		),
-		ContextKeyExpr.has('config.window.commandCenter').negate(),
-	),
+	when: ContextKeyExpr.false(),
 	order: 1
 });
 
@@ -286,7 +276,7 @@ MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 		id: 'workbench.action.chat.toggle',
 		title: localize('openChat', "Open Chat"),
 	},
-	when: ChatContextKeys.enabled,
+	when: ContextKeyExpr.false(),
 	group: 'a_open',
 	order: 1
 });
@@ -298,10 +288,7 @@ MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 		title: localize('toggleAgentQuickInput', "Agent Quick Input (Experimental)"),
 		toggled: ContextKeyExpr.has(`config.${ChatConfiguration.UnifiedAgentsBar}`),
 	},
-	when: ContextKeyExpr.and(
-		ChatContextKeys.enabled,
-		ProductQualityContext.notEqualsTo('stable')
-	),
+	when: ContextKeyExpr.false(),
 	group: 'z_experimental',
 	order: 10
 });

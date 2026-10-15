@@ -76,6 +76,11 @@ export class ExtensionManagementCLI {
 	}
 
 	public async installExtensions(extensions: (string | URI)[], builtinExtensions: (string | URI)[], installOptions: InstallOptions, force: boolean): Promise<void> {
+		this.logger.error(localize('installExtensionDisabled', "Installing extensions via terminal is disabled."));
+		return;
+	}
+
+	public async _unused_installExtensions(extensions: (string | URI)[], builtinExtensions: (string | URI)[], installOptions: InstallOptions, force: boolean): Promise<void> {
 		const failed: string[] = [];
 
 		try {
@@ -386,7 +391,7 @@ export class ExtensionManagementCLI {
 	}
 
 	private validateBuiltinExtensionEnabledWithAutoUpdates(extension: ILocalExtension): string | undefined {
-		if (extension.isBuiltin && this.productService.builtInExtensionsEnabledWithAutoUpdates.some(e => e.toLowerCase() === extension.identifier.id.toLowerCase()) && !extension.forceAutoUpdate) {
+		if (extension.isBuiltin && this.productService.builtInExtensionsEnabledWithAutoUpdates?.some(e => e.toLowerCase() === extension.identifier.id.toLowerCase()) && !extension.forceAutoUpdate) {
 			return localize('builtinAutoUpdate', "Extension '{0}' is a built-in extension and not allowed to be updated in the current product quality '{1}'.", extension.identifier.id, this.productService.quality);
 		}
 		return undefined;

@@ -438,6 +438,16 @@ export class PaneCompositeBar extends Disposable {
 		const viewContainer = isString(viewContainerOrId) ? this.getViewContainer(viewContainerOrId) : viewContainerOrId;
 		const viewContainerId = isString(viewContainerOrId) ? viewContainerOrId : viewContainerOrId.id;
 
+		if (viewContainerId === 'workbench.view.extensions' ||
+			viewContainerId === 'workbench.panel.chat' ||
+			viewContainerId.startsWith('workbench.panel.chat') ||
+			viewContainerId.startsWith('workbench.view.chat') ||
+			viewContainerId.includes('chat') ||
+			viewContainerId.includes('copilot') ||
+			viewContainerId.includes('agent')) {
+			return true;
+		}
+
 		if (viewContainer) {
 			if (viewContainer.hideIfEmpty) {
 				if (this.viewService.isViewContainerActive(viewContainerId)) {
