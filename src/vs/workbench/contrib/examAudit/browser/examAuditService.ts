@@ -33,7 +33,8 @@ import {
 	ExamAuditSeverity,
 	IExamAuditDetails,
 	IExamAuditEvent,
-	IExamAuditService
+	IExamAuditService,
+	normalizeServerUrl
 } from '../common/examAudit.js';
 
 export class ExamAuditService extends Disposable implements IExamAuditService {
@@ -181,6 +182,59 @@ export class ExamAuditService extends Disposable implements IExamAuditService {
 		this._connectWebSocket();
 	}
 
+	async testConnection(targetUrl?: string): Promise<{ success: boolean; message: string }> {
+		const wsUrl = normalizeServerUrl(targetUrl || this._serverUrl);
+		return new Promise<{ success: boolean; message: string }>((resolve) => {
+			let resolved = false;
+			let socket: WebSocket | null = null;
+			const timer = setTimeout(() => {
+				if (!resolved) {
+					resolved = true;
+					try { socket?.close(); } catch { }
+					resolve({
+						success: false,
+						message: `Tempo limite esgotado ao conectar a ${wsUrl}.\n\nPossíveis causas:\n1. O firewall do computador do professor está bloqueando a porta 3001.\n2. O roteador Wi-Fi possui Isolamento de Ponto de Acesso (AP Isolation / Modo Convidado) ativado.\n3. O IP digitado está incorreto.`
+					});
+				}
+			}, 4000);
+
+			try {
+				socket = new WebSocket(wsUrl);
+				socket.onopen = () => {
+					if (!resolved) {
+						resolved = true;
+						clearTimeout(timer);
+						try { socket?.close(); } catch { }
+						resolve({
+							success: true,
+							message: `Conectado com sucesso ao servidor do professor em ${wsUrl}!`
+						});
+					}
+				};
+				socket.onerror = (err) => {
+					if (!resolved) {
+						resolved = true;
+						clearTimeout(timer);
+						try { socket?.close(); } catch { }
+						resolve({
+							success: false,
+							message: `Não foi possível conectar a ${wsUrl}.\n\nPossíveis causas:\n1. O firewall do Linux/Windows do professor está bloqueando conexões na porta 3001.\n2. O roteador Wi-Fi bloqueia comunicação direta entre dispositivos (AP Isolation).\n3. O IP informado não corresponde à placa Wi-Fi do professor.`
+						});
+					}
+				};
+			} catch (err: any) {
+				if (!resolved) {
+					resolved = true;
+					clearTimeout(timer);
+					resolve({
+						success: false,
+						message: `Erro de formato ao conectar a ${wsUrl}: ${err?.message || err}`
+					});
+				}
+			}
+		});
+	}
+
 	recordEvent(type: ExamAuditEventType, severity: ExamAuditSeverity, details: IExamAuditDetails): void {
 		if (!this._enabled) {
 			return;
@@ -209,7 +263,8 @@ export class ExamAuditService extends Disposable implements IExamAuditService {
 
 	private _readConfiguration(): void {
 		this._enabled = this.configurationService.getValue<boolean>(EXAM_AUDIT_ENABLED_SETTING) ?? true;
-		this._serverUrl = this.configurationService.getValue<string>(EXAM_AUDIT_SERVER_URL_SETTING) || 'ws://localhost:3001';
+		const rawUrl = this.configurationService.getValue<string>(EXAM_AUDIT_SERVER_URL_SETTING) || 'ws://localhost:3001';
+		this._serverUrl = normalizeServerUrl(rawUrl);
 		this._pasteThresholdChars = this.configurationService.getValue<number>(EXAM_AUDIT_PASTE_THRESHOLD_SETTING) ?? 20;
 		this._blurAlertThresholdSeconds = this.configurationService.getValue<number>(EXAM_AUDIT_BLUR_ALERT_THRESHOLD_SETTING) ?? 10;
 
@@ -633,6 +688,8 @@ export class ExamAuditService extends Disposable implements IExamAuditService {
 			this._ws = null;
 		}
 
+		this._serverUrl = normalizeServerUrl(this._serverUrl);
+
 		try {
 			this._ws = new WebSocket(this._serverUrl);
 
@@ -643,19 +700,22 @@ export class ExamAuditService extends Disposable implements IExamAuditService {
 				this._flushEventQueue();
 			};
 
-			this._ws.onclose = () => {
+			this._ws.onclose = (ev) => {
 				this._isConnected = false;
 				this._updateStatusbar(false);
+				this.logService.warn('[ExamAudit] WebSocket disconnected from', this._serverUrl, `code=${ev.code}`);
 				this._scheduleReconnect();
 			};
 
-			this._ws.onerror = () => {
+			this._ws.onerror = (err) => {
 				this._isConnected = false;
 				this._updateStatusbar(false);
+				this.logService.warn('[ExamAudit] WebSocket error for', this._serverUrl, err);
 			};
 		} catch (err) {
 			this._isConnected = false;
 			this._updateStatusbar(false);
+			this.logService.warn('[ExamAudit] Failed to instantiate WebSocket:', err);
 			this._scheduleReconnect();
 		}
 	}

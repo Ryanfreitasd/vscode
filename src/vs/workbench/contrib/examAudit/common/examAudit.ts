@@ -62,6 +62,23 @@ export interface IExamAuditService {
 	isConnectedToProctor(): boolean;
 	getServerUrl(): string;
 	reconnect(): void;
+	testConnection(targetUrl?: string): Promise<{ success: boolean; message: string }>;
+}
+
+export function normalizeServerUrl(rawInput: string): string {
+	let clean = (rawInput || '').trim();
+	if (!clean) {
+		return 'ws://localhost:3001';
+	}
+	// Remove protocol if provided (http://, https://, ws://, wss://)
+	clean = clean.replace(/^(http|ws)s?:\/\//i, '');
+	// Remove trailing paths/slashes
+	clean = clean.replace(/\/.*$/, '');
+	// If no port specified, default to 3001
+	if (!clean.includes(':')) {
+		clean = `${clean}:3001`;
+	}
+	return `ws://${clean}`;
 }
 
 export const EXAM_AUDIT_ENABLED_SETTING = 'exam.audit.enabled';

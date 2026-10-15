@@ -393,6 +393,10 @@ function getLanIps() {
 	const interfaces = os.networkInterfaces();
 	const ips = [];
 	for (const name of Object.keys(interfaces)) {
+		// Filter out virtual, container and bridge interfaces
+		if (/^(docker|br-|veth|vmnet|vboxnet|tun|tap|virbr)/i.test(name)) {
+			continue;
+		}
 		for (const iface of interfaces[name] || []) {
 			if (iface.family === 'IPv4' && !iface.internal) {
 				ips.push({ name, address: iface.address });

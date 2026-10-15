@@ -19,7 +19,8 @@ import {
 	EXAM_AUDIT_PASTE_THRESHOLD_SETTING,
 	EXAM_AUDIT_SERVER_URL_SETTING,
 	EXAM_AUDIT_STUDENT_NAME_SETTING,
-	IExamAuditService
+	IExamAuditService,
+	normalizeServerUrl
 } from '../common/examAudit.js';
 import { ExamAuditService } from './examAuditService.js';
 
@@ -102,21 +103,27 @@ registerAction2(class ConfigureExamServerAction extends Action2 {
 			placeHolder: '192.168.1.100:3001'
 		});
 
-		if (!input) {
+		if (!input || input.trim().length === 0) {
 			return;
 		}
 
-		let formattedUrl = input.trim();
-		if (!formattedUrl.startsWith('ws://') && !formattedUrl.startsWith('wss://')) {
-			formattedUrl = 'ws://' + formattedUrl;
-		}
+		const formattedUrl = normalizeServerUrl(input);
 
 		await configurationService.updateValue(EXAM_AUDIT_SERVER_URL_SETTING, formattedUrl, ConfigurationTarget.USER);
 		examAuditService.reconnect();
-		notificationService.notify({
-			severity: Severity.Info,
-			message: `Servidor da prova configurado para: ${formattedUrl}. Conectando...`
-		});
+
+		const result = await examAuditService.testConnection(formattedUrl);
+		if (result.success) {
+			notificationService.notify({
+				severity: Severity.Info,
+				message: `🟢 ${result.message}`
+			});
+		} else {
+			notificationService.notify({
+				severity: Severity.Warning,
+				message: `🔴 ${result.message}`
+			});
+		}
 	}
 });
 
@@ -172,6 +179,12 @@ registerAction2(class ExamMenuAction extends Action2 {
 				detail: 'Configurar o endereço IP da máquina do professor'
 			},
 			{
+				id: 'testConn',
+				label: '$(debug-disconnect) Testar Conexão com o Servidor',
+				description: serverUrl,
+				detail: 'Testar acessibilidade e diagnóstico de rede/firewall'
+			},
+			{
 				id: 'status',
 				label: '$(shield) Status da Auditoria de Prova',
 				description: isConnected ? 'Ativo e Transmitindo em Tempo Real' : 'Gravando Localmente',
@@ -196,17 +209,32 @@ registerAction2(class ExamMenuAction extends Action2 {
 				placeHolder: '192.168.1.100:3001'
 			});
 			if (input && input.trim().length > 0) {
-				let formattedUrl = input.trim();
-				if (!formattedUrl.startsWith('ws://') && !formattedUrl.startsWith('wss://')) {
-					formattedUrl = 'ws://' + formattedUrl;
-				}
+				const formattedUrl = normalizeServerUrl(input);
 				await configurationService.updateValue(EXAM_AUDIT_SERVER_URL_SETTING, formattedUrl, ConfigurationTarget.USER);
 				examAuditService.reconnect();
-				notificationService.notify({
-					severity: Severity.Info,
-					message: `Servidor da prova configurado para: ${formattedUrl}. Conectando...`
-				});
+				const result = await examAuditService.testConnection(formattedUrl);
+				if (result.success) {
+					notificationService.notify({
+						severity: Severity.Info,
+						message: `🟢 ${result.message}`
+					});
+				} else {
+					notificationService.notify({
+						severity: Severity.Warning,
+						message: `🔴 ${result.message}`
+					});
+				}
 			}
+		} else if (pick.id === 'testConn') {
+			notificationService.notify({
+				severity: Severity.Info,
+				message: `Testando conexão com ${serverUrl}...`
+			});
+			const result = await examAuditService.testConnection(serverUrl);
+			notificationService.notify({
+				severity: result.success ? Severity.Info : Severity.Warning,
+				message: result.success ? `🟢 ${result.message}` : `🔴 ${result.message}`
+			});
 		} else if (pick.id === 'status') {
 			notificationService.notify({
 				severity: isConnected ? Severity.Info : Severity.Warning,
